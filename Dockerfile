@@ -25,10 +25,12 @@ RUN apk add --no-cache \
 
 COPY package.json yarn.lock ./
 RUN if [ -n "$VERSION" ]; then \
-        jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json; \
+    jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json; \
     fi
 RUN for i in 1 2 3; do yarn install --production --frozen-lockfile --network-timeout 500000 && break || sleep 15; done
 
+
+RUN yarn add dotenv
 COPY server/ server/
 
 FROM node:22-alpine AS guacd-builder
